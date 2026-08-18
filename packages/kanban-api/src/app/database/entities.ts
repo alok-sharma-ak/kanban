@@ -1,70 +1,28 @@
-import { Exclude } from 'class-transformer';
-import { Column as DbColumn, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column as DbColumn, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Attachment } from '../attachments/entities/attachment.entity';
+import { Board } from '../boards/entities/board.entity';
+import { KanbanColumn } from '../columns/entities/column.entity';
+import { Task } from '../tasks/entities/task.entity';
+import { User } from '../users/entities/user.entity';
 
-@Entity('users')
-export class User {
+export { User } from '../users/entities/user.entity';
+export { Board } from '../boards/entities/board.entity';
+export { KanbanColumn } from '../columns/entities/column.entity';
+export { Task } from '../tasks/entities/task.entity';
+export { Attachment } from '../attachments/entities/attachment.entity';
+
+@Entity('storage_cleanup_jobs')
+@Index(['status', 'nextAttemptAt'])
+export class StorageCleanupJob {
   @PrimaryGeneratedColumn('uuid') id!: string;
-  @DbColumn({ length: 120 }) name!: string;
-  @Index({ unique: true }) @DbColumn({ length: 320 }) email!: string;
-  @Exclude() @DbColumn({ name: 'password_hash' }) passwordHash!: string;
-  @OneToMany(() => Board, (board) => board.user) boards!: Board[];
+  @DbColumn({ name: 'object_key' }) objectKey!: string;
+  @DbColumn({ length: 20, default: 'pending' }) status!: 'pending' | 'processing' | 'completed' | 'failed';
+  @DbColumn({ type: 'integer', default: 0 }) attempts!: number;
+  @DbColumn({ name: 'next_attempt_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' }) nextAttemptAt!: Date;
+  @DbColumn({ name: 'last_error', type: 'text', nullable: true }) lastError!: string | null;
+  @DbColumn({ name: 'completed_at', type: 'timestamptz', nullable: true }) completedAt!: Date | null;
   @CreateDateColumn({ name: 'created_at' }) createdAt!: Date;
   @UpdateDateColumn({ name: 'updated_at' }) updatedAt!: Date;
 }
 
-@Entity('boards')
-@Index(['userId'])
-export class Board {
-  @PrimaryGeneratedColumn('uuid') id!: string;
-  @DbColumn({ length: 160 }) name!: string;
-  @DbColumn({ type: 'text', nullable: true }) description!: string | null;
-  @DbColumn({ name: 'user_id', type: 'uuid' }) userId!: string;
-  @ManyToOne(() => User, (user) => user.boards, { onDelete: 'CASCADE' }) @JoinColumn({ name: 'user_id' }) user!: User;
-  @OneToMany(() => KanbanColumn, (column) => column.board) columns!: KanbanColumn[];
-  @CreateDateColumn({ name: 'created_at' }) createdAt!: Date;
-  @UpdateDateColumn({ name: 'updated_at' }) updatedAt!: Date;
-}
-
-@Entity('columns')
-@Index(['boardId', 'position'])
-export class KanbanColumn {
-  @PrimaryGeneratedColumn('uuid') id!: string;
-  @DbColumn({ length: 120 }) name!: string;
-  @DbColumn({ type: 'integer' }) position!: number;
-  @DbColumn({ name: 'board_id', type: 'uuid' }) boardId!: string;
-  @ManyToOne(() => Board, (board) => board.columns, { onDelete: 'CASCADE' }) @JoinColumn({ name: 'board_id' }) board!: Board;
-  @OneToMany(() => Task, (task) => task.column) tasks!: Task[];
-  @CreateDateColumn({ name: 'created_at' }) createdAt!: Date;
-  @UpdateDateColumn({ name: 'updated_at' }) updatedAt!: Date;
-}
-
-@Entity('tasks')
-@Index(['columnId', 'position'])
-export class Task {
-  @PrimaryGeneratedColumn('uuid') id!: string;
-  @DbColumn({ length: 200 }) title!: string;
-  @DbColumn({ type: 'text', nullable: true }) description!: string | null;
-  @DbColumn({ type: 'integer' }) position!: number;
-  @DbColumn({ name: 'column_id', type: 'uuid' }) columnId!: string;
-  @ManyToOne(() => KanbanColumn, (column) => column.tasks, { onDelete: 'CASCADE' }) @JoinColumn({ name: 'column_id' }) column!: KanbanColumn;
-  @OneToMany(() => Attachment, (attachment) => attachment.task) attachments!: Attachment[];
-  @CreateDateColumn({ name: 'created_at' }) createdAt!: Date;
-  @UpdateDateColumn({ name: 'updated_at' }) updatedAt!: Date;
-}
-
-@Entity('attachments')
-@Index(['taskId'])
-export class Attachment {
-  @PrimaryGeneratedColumn('uuid') id!: string;
-  @DbColumn({ name: 'original_name', length: 255 }) originalName!: string;
-  @Exclude() @Index({ unique: true }) @DbColumn({ name: 'storage_key' }) storageKey!: string;
-  @DbColumn({ name: 'mime_type', length: 100 }) mimeType!: string;
-  @DbColumn({ type: 'bigint', transformer: { to: (v: number) => v, from: (v: string) => Number(v) } }) size!: number;
-  @DbColumn({ name: 'task_id', type: 'uuid' }) taskId!: string;
-  @DbColumn({ name: 'uploader_id', type: 'uuid' }) uploaderId!: string;
-  @ManyToOne(() => Task, (task) => task.attachments, { onDelete: 'CASCADE' }) @JoinColumn({ name: 'task_id' }) task!: Task;
-  @CreateDateColumn({ name: 'created_at' }) createdAt!: Date;
-  @UpdateDateColumn({ name: 'updated_at' }) updatedAt!: Date;
-}
-
-export const ENTITIES = [User, Board, KanbanColumn, Task, Attachment];
+export const ENTITIES = [User, Board, KanbanColumn, Task, Attachment, StorageCleanupJob];

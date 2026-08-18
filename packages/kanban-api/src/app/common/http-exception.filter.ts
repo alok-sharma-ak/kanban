@@ -12,11 +12,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const body = typeof raw === 'object' && raw ? raw as Record<string, unknown> : {};
     if (!(exception instanceof HttpException)) this.logger.error(exception);
     response.status(status).json({
+      ...body,
       statusCode: status,
       message: body.message ?? (status === 500 ? 'Internal server error' : String(raw)),
       error: body.error ?? HttpStatus[status] ?? 'Error',
       path: request.originalUrl,
       timestamp: new Date().toISOString(),
+      requestId: (request as Request & { requestId?: string }).requestId,
     });
   }
 }

@@ -29,14 +29,17 @@ Nx workspace containing a Next.js dashboard and a NestJS REST API backed by Post
 
 The API is available at `http://localhost:3001/api`; Swagger is available at `http://localhost:3001/api/docs` in non-production environments. MinIO's local console is available at `http://localhost:9001`.
 
-Build and run API end-to-end tests with `pnpm api:build` and `pnpm api:e2e`. Stop infrastructure with `pnpm infra:down`. PostgreSQL, Redis, and MinIO data remain in named Docker volumes.
+Build and verify with `pnpm api:build`, `pnpm api:typecheck`, `pnpm api:lint`, `pnpm api:test`, and `pnpm api:e2e`. Inspect migrations with `pnpm db:status`, run one cleanup-outbox batch with `pnpm storage:cleanup`, and stop infrastructure with `pnpm infra:down`. PostgreSQL, Redis, and MinIO data remain in named Docker volumes.
 
 ## API behavior
 
 - All endpoints except registration, login, health, and development Swagger require `Authorization: Bearer <token>`.
+- Access tokens expire after 15 minutes by default. Registration and login return an opaque refresh token; rotate it through `POST /api/auth/refresh`, revoke one session through `POST /api/auth/logout`, or revoke all user sessions through `POST /api/auth/logout-all`.
 - New boards contain Todo, In Progress, and Done columns.
 - Reorder payloads contain every ID in the target collection exactly once.
 - Attachments accept PDF, JPEG, PNG, GIF, WebP, and plain-text files up to 10 MB and are streamed only after ownership authorization.
+- `/api/health/live` reports process liveness; `/api/health/ready` and the backward-compatible `/api/health` verify PostgreSQL, Redis, MinIO, and the cleanup worker.
+- Object deletion is recorded transactionally and retried by the storage-cleanup outbox worker.
 
 ## Generated workspace notes
 

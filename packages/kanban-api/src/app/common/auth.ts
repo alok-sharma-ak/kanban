@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiProperty } from '@nestjs/swagger';
 import { Request } from 'express';
-import { User } from '../database/entities';
+import { User } from '../users/entities/user.entity';
 
 export const IS_PUBLIC = 'isPublic';
 export const Public = () => SetMetadata(IS_PUBLIC, true);
@@ -29,4 +29,5 @@ export class ErrorResponseDto {
   @ApiProperty() error!: string;
   @ApiProperty() path!: string;
   @ApiProperty() timestamp!: string;
+  @ApiProperty({ required: false }) requestId?: string;
 }
