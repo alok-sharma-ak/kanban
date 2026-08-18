@@ -16,7 +16,12 @@
     "db:status": "TS_NODE_PROJECT=packages/kanban-api/tsconfig.app.json node -r ts-node/register node_modules/typeorm/cli.js migration:show -d packages/kanban-api/src/app/database/data-source.ts",
     "storage:cleanup": "TS_NODE_PROJECT=packages/kanban-api/tsconfig.app.json node -r ts-node/register packages/kanban-api/src/outbox-cleanup.ts",
     "admin:promote": "TS_NODE_PROJECT=packages/kanban-api/tsconfig.app.json node -r ts-node/register packages/kanban-api/src/promote-admin.ts",
-    "bruno:test": "cd bruno && bru run -r --env local --bail"
+    "bruno:test": "cd bruno && bru run -r --env local --bail",
+    "dashboard:serve": "nx serve kanban-dashboard",
+    "dashboard:build": "nx build kanban-dashboard",
+    "dashboard:test": "nx test kanban-dashboard",
+    "dashboard:typecheck": "tsc -p packages/kanban-dashboard/tsconfig.json --noEmit",
+    "dashboard:lint": "eslint packages/kanban-dashboard/src"
   },
   "private": true,
   "devDependencies": {
@@ -36,6 +41,8 @@
     "@swc/cli": "~0.8.0",
     "@swc/core": "~1.15.5",
     "@swc/helpers": "~0.5.18",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.2",
     "@types/express": "^5.0.6",
     "@types/jest": "^29.5.14",
     "@types/multer": "^2.2.0",
@@ -48,6 +55,7 @@
     "@usebruno/cli": "^4.0.0",
     "eslint": "^10.8.1",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.4.1",
     "nx": "22.7.8",
     "prettier": "~3.6.2",
     "ts-jest": "^29.2.5",
@@ -66,6 +74,7 @@
     "@nestjs/platform-express": "^11.0.0",
     "@nestjs/swagger": "^11.4.6",
     "@nestjs/typeorm": "^11.0.3",
+    "@tailwindcss/postcss": "^4.3.3",
     "axios": "^1.6.0",
     "bcryptjs": "^3.0.3",
     "class-transformer": "^0.5.1",
@@ -85,6 +94,8 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
     "swagger-ui-express": "^5.0.1",
-    "typeorm": "^1.1.0"
+    "tailwindcss": "^4.3.3",
+    "typeorm": "^1.1.0",
+    "zod": "^4.4.3"
   }
 }
