@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'kanban-api-e2e',
   preset: '../../jest.preset.js',
   globalSetup: '<rootDir>/src/support/global-setup.ts',
@@ -6,12 +6,7 @@ export default {
   setupFiles: ['<rootDir>/src/support/test-setup.ts'],
   testEnvironment: 'node',
   transform: {
-    '^.+\\.[tj]s$': [
-      'ts-jest',
-      {
-        tsconfig: '<rootDir>/tsconfig.spec.json',
-      },
-    ],
+    '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/kanban-api-e2e',

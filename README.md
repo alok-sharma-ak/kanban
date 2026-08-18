@@ -1,5 +1,45 @@
 # Kanban
 
+Nx workspace containing a Next.js dashboard and a NestJS REST API backed by PostgreSQL, Redis, and private MinIO object storage.
+
+## Backend quick start
+
+1. Review the separate local environment files:
+
+   - `packages/kanban-api/.env` for NestJS and its Docker infrastructure.
+   - `packages/kanban-dashboard/.env.local` for Next.js.
+
+2. Start PostgreSQL, Redis, and MinIO:
+
+   ```sh
+   pnpm infra:up
+   ```
+
+3. Apply the TypeORM migration:
+
+   ```sh
+   pnpm db:migrate
+   ```
+
+4. Start the NestJS API:
+
+   ```sh
+   pnpm api:serve
+   ```
+
+The API is available at `http://localhost:3001/api`; Swagger is available at `http://localhost:3001/api/docs` in non-production environments. MinIO's local console is available at `http://localhost:9001`.
+
+Build and run API end-to-end tests with `pnpm api:build` and `pnpm api:e2e`. Stop infrastructure with `pnpm infra:down`. PostgreSQL, Redis, and MinIO data remain in named Docker volumes.
+
+## API behavior
+
+- All endpoints except registration, login, health, and development Swagger require `Authorization: Bearer <token>`.
+- New boards contain Todo, In Progress, and Done columns.
+- Reorder payloads contain every ID in the target collection exactly once.
+- Attachments accept PDF, JPEG, PNG, GIF, WebP, and plain-text files up to 10 MB and are streamed only after ownership authorization.
+
+## Generated workspace notes
+
 <a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
 
 ✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.

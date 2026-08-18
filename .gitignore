@@ -7,6 +7,7 @@ out-tsc
 
 # dependencies
 node_modules
+.pnpm-store
 
 # IDEs and editors
 /.idea
@@ -25,6 +26,13 @@ node_modules
 !.vscode/extensions.json
 
 # misc
+.env
+.env.*
+!.env.example
+!/packages/kanban-api/.env
+!/packages/kanban-api/.env.example
+!/packages/kanban-dashboard/.env.local
+!/packages/kanban-dashboard/.env.example
 /.sass-cache
 /connect.lock
 /coverage
