@@ -50,40 +50,30 @@ Drag & Drop
 
 # 2. Nx Workspace Structure
 
-Recommended structure:
+The structure for our applications is as follows:
 
 ```text
 kanban/
 │
-├── apps/
+├── packages/
 │   │
-│   ├── api/
+│   ├── kanban-api/
+│   │   ├── src/
+│   │   │   └── app/
+│   │   │       ├── auth/
+│   │   │       ├── users/
+│   │   │       ├── boards/
+│   │   │       ├── columns/
+│   │   │       └── tasks/
+│   │   └── project.json
+│   │
+│   ├── kanban-api-e2e/
+│   │
+│   ├── kanban-dashboard/
 │   │   ├── src/
 │   │   └── project.json
 │   │
-│   └── dashboard/
-│       ├── src/
-│       └── project.json
-│
-├── libs/
-│   │
-│   ├── backend/
-│   │   ├── auth/
-│   │   ├── users/
-│   │   ├── boards/
-│   │   ├── columns/
-│   │   └── tasks/
-│   │
-│   ├── frontend/
-│   │   ├── ui/
-│   │   ├── auth/
-│   │   ├── boards/
-│   │   └── tasks/
-│   │
-│   └── shared/
-│       ├── types/
-│       ├── dto/
-│       └── utils/
+│   └── kanban-dashboard-e2e/
 │
 ├── nx.json
 ├── package.json
@@ -91,18 +81,16 @@ kanban/
 └── pnpm-lock.yaml
 ```
 
-For a small learning project, the backend modules can initially remain inside the NestJS application:
+All backend modules are located directly within the NestJS application:
 
 ```text
-apps/api/src/app/
+packages/kanban-api/src/app/
 ├── auth/
 ├── users/
 ├── boards/
 ├── columns/
 └── tasks/
 ```
-
-Move them into Nx libraries later if the application becomes larger.
 
 ---
 
@@ -111,7 +99,7 @@ Move them into Nx libraries later if the application becomes larger.
 ## Backend
 
 ```text
-apps/api
+packages/kanban-api
 ```
 
 Technology:
@@ -142,7 +130,7 @@ Database
 ## Frontend
 
 ```text
-apps/dashboard
+packages/kanban-dashboard
 ```
 
 Technology:
@@ -827,7 +815,7 @@ Recommended Next.js routes:
 Example App Router structure:
 
 ```text
-apps/dashboard/src/app/
+packages/kanban-dashboard/src/app/
 │
 ├── page.tsx
 │
@@ -981,15 +969,11 @@ Backend updates database
 
 # 25. Shared Types
 
-One advantage of Nx is sharing TypeScript code between frontend and backend.
+To share TypeScript interfaces/types between the Next.js frontend and NestJS backend without creating extra library projects:
 
-Example:
+We can define shared interfaces and DTO definitions in both applications, or place them in a shared directory inside one of the apps (e.g., as exports or a package reference) or keep them aligned manually.
 
-```text
-libs/shared/types
-```
-
-Example:
+Example interface:
 
 ```ts
 export interface Task {
@@ -1000,20 +984,6 @@ export interface Task {
   columnId: string;
 }
 ```
-
-Then both:
-
-```text
-NestJS
-```
-
-and:
-
-```text
-Next.js
-```
-
-can use the same types.
 
 Avoid sharing database entities directly with the frontend.
 
@@ -1077,21 +1047,23 @@ pnpm nx add @nx/next
 Generate backend:
 
 ```bash
-pnpm nx g @nx/nest:app api
+pnpm exec nx g @nx/nest:app --name=kanban-api --directory=packages/kanban-api
 ```
 
 Generate frontend:
 
 ```bash
-pnpm nx g @nx/next:app dashboard
+pnpm exec nx g @nx/next:app --name=kanban-dashboard --directory=packages/kanban-dashboard
 ```
 
 Result:
 
 ```text
-apps/
-├── api
-└── dashboard
+packages/
+├── kanban-api/
+├── kanban-api-e2e/
+├── kanban-dashboard/
+└── kanban-dashboard-e2e/
 ```
 
 ---
@@ -1144,7 +1116,7 @@ shadcn/ui
 # 30. Backend Folder Structure
 
 ```text
-apps/api/src/app/
+packages/kanban-api/src/app/
 │
 ├── auth/
 │   ├── auth.controller.ts
