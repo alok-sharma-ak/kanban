@@ -1,0 +1,9 @@
+{
+  "name": "kanban-dashboard",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/kanban-dashboard",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project kanban-dashboard --web",
+  "targets": {}
+}
