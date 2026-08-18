@@ -23,6 +23,12 @@ async function accessToken(): Promise<string | undefined> {
   return (await cookies()).get(ACCESS_COOKIE)?.value;
 }
 
+export async function authenticatedHeaders(): Promise<HeadersInit> {
+  const token = await accessToken();
+  if (!token) throw new ApiError(401, 'Session expired');
+  return { Authorization: `Bearer ${token}` };
+}
+
 export const getCurrentUser = cache(async (): Promise<AuthUser> => {
   const token = await accessToken();
   if (!token) redirect('/login');

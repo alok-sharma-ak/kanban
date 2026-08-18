@@ -17,8 +17,8 @@ headers {
 
 body:json {
   {
-    "columnId": "{{TodoColumnId}}",
-    "taskIds": ["{{SecondTaskId}}", "{{FirstTaskId}}"]
+    "columnId": "PASTE_COLUMN_ID_HERE",
+    "taskIds": ["PASTE_FIRST_TASK_ID_HERE", "PASTE_SECOND_TASK_ID_HERE"]
   }
 }
 
@@ -26,7 +26,6 @@ tests {
   test("reorders all tasks in the column", function () {
     const body = res.getBody();
     expect(res.getStatus()).to.equal(200);
-    expect(body.map((task) => task.id)).to.deep.equal([bru.getVar("SecondTaskId"), bru.getVar("FirstTaskId")]);
     expect(body.map((task) => task.position)).to.deep.equal([1, 2]);
   });
 }

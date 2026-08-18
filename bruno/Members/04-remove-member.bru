@@ -1,0 +1,21 @@
+meta {
+  name: Remove board member
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{HostUrl}}/boards/PASTE_BOARD_ID_HERE/members/PASTE_USER_ID_HERE
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{AuthKey}}
+}
+
+tests {
+  test("removes the member", function () {
+    expect(res.getStatus()).to.equal(204);
+  });
+}

@@ -1,7 +1,7 @@
 import 'server-only';
 import { ApiError, ApiErrorBody } from './error';
 
-function apiUrl(): string {
+export function apiUrl(): string {
   const value = process.env.KANBAN_API_URL?.trim();
   if (!value) throw new Error('KANBAN_API_URL is required');
   return value.replace(/\/$/, '');

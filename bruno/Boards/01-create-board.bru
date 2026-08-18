@@ -22,14 +22,6 @@ body:json {
   }
 }
 
-script:post-response {
-  const body = res.getBody();
-  bru.setVar("BoardId", body.id);
-  bru.setVar("TodoColumnId", body.columns[0].id);
-  bru.setVar("ProgressColumnId", body.columns[1].id);
-  bru.setVar("DoneColumnId", body.columns[2].id);
-}
-
 tests {
   test("creates a board with default columns", function () {
     const body = res.getBody();

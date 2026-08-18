@@ -21,12 +21,6 @@ body:json {
   }
 }
 
-script:post-response {
-  const body = res.getBody();
-  bru.deleteVar("AuthKey");
-  bru.setVar("RefreshToken", body.refreshToken);
-}
-
 tests {
   test("logs in and returns tokens", function () {
     const body = res.getBody();

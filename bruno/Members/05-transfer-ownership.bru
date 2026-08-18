@@ -1,0 +1,28 @@
+meta {
+  name: Transfer board ownership
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{HostUrl}}/boards/PASTE_BOARD_ID_HERE/owner
+  body: json
+  auth: none
+}
+
+headers {
+  content-type: application/json
+  Authorization: Bearer {{AuthKey}}
+}
+
+body:json {
+  {
+    "userId": "PASTE_NEW_OWNER_USER_ID_HERE"
+  }
+}
+
+tests {
+  test("transfers ownership", function () {
+    expect(res.getStatus()).to.equal(204);
+  });
+}

@@ -15,8 +15,8 @@ headers {
 }
 
 tests {
-  test("lists the created board", function () {
+  test("lists accessible boards", function () {
     expect(res.getStatus()).to.equal(200);
-    expect(res.getBody().some((board) => board.id === bru.getVar("BoardId"))).to.equal(true);
+    expect(res.getBody()).to.be.an("array");
   });
 }

@@ -1,0 +1,6 @@
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { Card } from '../../../../components/ui/card';
+import { getAttachments, getTask } from '../../../../lib/api/kanban';
+import { ApiError } from '../../../../lib/api/error';
+export default async function TaskPage({params}:{params:Promise<{taskId:string}>}){const {taskId}=await params;try{const [task,attachments]=await Promise.all([getTask(taskId),getAttachments(taskId)]);return <div className="mx-auto max-w-2xl space-y-5"><Link className="text-sm text-violet-300" href="/dashboard">← Boards</Link><Card className="p-6"><h1 className="text-2xl font-semibold">{task.title}</h1><p className="mt-3 whitespace-pre-wrap text-muted">{task.description||'No description'}</p><dl className="mt-6 grid gap-3 text-sm sm:grid-cols-2"><div><dt className="text-muted">Position</dt><dd>{task.position}</dd></div><div><dt className="text-muted">Assignee</dt><dd>{task.assigneeId||'Unassigned'}</dd></div></dl></Card><Card className="p-6"><h2 className="font-semibold">Attachments</h2><ul className="mt-3 space-y-2">{attachments.map(a=><li key={a.id}><a className="text-violet-300 hover:underline" href={`/api/attachments/${a.id}/download`}>{a.originalName}</a></li>)}</ul></Card></div>}catch(e){if(e instanceof ApiError&&e.status===404)notFound();throw e;}}

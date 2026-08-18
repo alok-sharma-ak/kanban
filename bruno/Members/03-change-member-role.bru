@@ -1,0 +1,29 @@
+meta {
+  name: Change board member role
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{HostUrl}}/boards/PASTE_BOARD_ID_HERE/members/PASTE_USER_ID_HERE
+  body: json
+  auth: none
+}
+
+headers {
+  content-type: application/json
+  Authorization: Bearer {{AuthKey}}
+}
+
+body:json {
+  {
+    "role": "VIEWER"
+  }
+}
+
+tests {
+  test("changes the member permission", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().role).to.equal("VIEWER");
+  });
+}

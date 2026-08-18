@@ -30,7 +30,7 @@ test('registers, restores, refreshes, and logs out a server-only session', async
   await page.getByLabel('Password').fill(password);
   await page.getByRole('button', { name: 'Create account' }).click();
   await expect(page).toHaveURL(/\/dashboard/);
-  await expect(page.getByRole('heading', { name: /Good to see you/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Your boards' })).toBeVisible();
   expect(apiRequests).toEqual([]);
 
   let cookies = await context.cookies();

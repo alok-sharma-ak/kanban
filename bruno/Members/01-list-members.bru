@@ -1,0 +1,22 @@
+meta {
+  name: List board members
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{HostUrl}}/boards/PASTE_BOARD_ID_HERE/members
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{AuthKey}}
+}
+
+tests {
+  test("returns visible board members", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody()).to.be.an("array");
+  });
+}

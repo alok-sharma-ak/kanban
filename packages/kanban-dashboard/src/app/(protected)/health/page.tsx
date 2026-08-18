@@ -1,0 +1,5 @@
+import { Card } from '../../../components/ui/card';
+import { Badge } from '../../../components/ui/badge';
+import { getLiveness, getReadiness } from '../../../lib/api/kanban';
+export const dynamic='force-dynamic';
+export default async function HealthPage(){const [live,ready]=await Promise.allSettled([getLiveness(),getReadiness()]);const checks:Record<string,string>={api:live.status==='fulfilled'?'up':'down'};if(ready.status==='fulfilled')Object.assign(checks,ready.value.checks);else Object.assign(checks,{postgres:'down',redis:'down',minio:'down',outbox:'down'});return <div className="space-y-6"><div><h1 className="text-3xl font-semibold">System health</h1><p className="mt-2 text-muted">Live dependency status; this page is never cached.</p></div><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">{Object.entries(checks).map(([name,status])=><Card className="p-5" key={name}><div className="flex items-center justify-between"><h2 className="capitalize">{name}</h2><Badge tone={status==='up'?'green':'red'}>{status}</Badge></div></Card>)}</div></div>}

@@ -1,0 +1,2 @@
+import { canEditBoard, canEditTasks, canManageMembers } from './types';
+describe('board permissions',()=>{it('matches the board permission matrix',()=>{expect(canEditBoard('OWNER')).toBe(true);expect(canEditBoard('ADMIN')).toBe(true);expect(canEditBoard('MEMBER')).toBe(false);expect(canEditTasks('MEMBER')).toBe(true);expect(canEditTasks('VIEWER')).toBe(false);expect(canManageMembers('ADMIN')).toBe(true);expect(canManageMembers('VIEWER')).toBe(false)})});

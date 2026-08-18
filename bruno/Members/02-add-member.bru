@@ -1,0 +1,32 @@
+meta {
+  name: Add member and give permission
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{HostUrl}}/boards/PASTE_BOARD_ID_HERE/members
+  body: json
+  auth: none
+}
+
+headers {
+  content-type: application/json
+  Authorization: Bearer {{AuthKey}}
+}
+
+body:json {
+  {
+    "email": "member@example.com",
+    "role": "MEMBER"
+  }
+}
+
+tests {
+  test("adds an existing registered user", function () {
+    const body = res.getBody();
+    expect(res.getStatus()).to.equal(201);
+    expect(body.userId).to.be.a("string");
+    expect(body.role).to.equal("MEMBER");
+  });
+}

@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{HostUrl}}/columns/{{TodoColumnId}}/tasks
+  url: {{HostUrl}}/columns/PASTE_COLUMN_ID_HERE/tasks
   body: json
   auth: none
 }
@@ -19,10 +19,6 @@ body:json {
   {
     "title": "Second Bruno task"
   }
-}
-
-script:post-response {
-  bru.setVar("SecondTaskId", res.getBody().id);
 }
 
 tests {

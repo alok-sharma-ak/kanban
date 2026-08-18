@@ -1,0 +1,29 @@
+meta {
+  name: Change global system role
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{HostUrl}}/admin/users/PASTE_USER_ID_HERE/role
+  body: json
+  auth: none
+}
+
+headers {
+  content-type: application/json
+  Authorization: Bearer {{AuthKey}}
+}
+
+body:json {
+  {
+    "role": "ADMIN"
+  }
+}
+
+tests {
+  test("changes the global system role", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().systemRole).to.equal("ADMIN");
+  });
+}

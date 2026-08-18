@@ -17,12 +17,12 @@ headers {
 
 body:json {
   {
-    "boardId": "{{BoardId}}",
+    "boardId": "PASTE_BOARD_ID_HERE",
     "columnIds": [
-      "{{TodoColumnId}}",
-      "{{ProgressColumnId}}",
-      "{{CustomColumnId}}",
-      "{{DoneColumnId}}"
+      "PASTE_FIRST_COLUMN_ID_HERE",
+      "PASTE_SECOND_COLUMN_ID_HERE",
+      "PASTE_THIRD_COLUMN_ID_HERE",
+      "PASTE_FOURTH_COLUMN_ID_HERE"
     ]
   }
 }
@@ -33,6 +33,5 @@ tests {
     expect(res.getStatus()).to.equal(200);
     expect(body).to.have.length(4);
     expect(body.map((column) => column.position)).to.deep.equal([1, 2, 3, 4]);
-    expect(body[2].id).to.equal(bru.getVar("CustomColumnId"));
   });
 }

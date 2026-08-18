@@ -1,0 +1,2 @@
+import type { ReactNode } from 'react';
+export function Badge({children,tone='violet'}:{children:ReactNode;tone?:'violet'|'green'|'amber'|'red'}){const c={violet:'bg-violet-500/15 text-violet-300',green:'bg-emerald-500/15 text-emerald-300',amber:'bg-amber-500/15 text-amber-300',red:'bg-red-500/15 text-red-300'}[tone];return <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${c}`}>{children}</span>}
