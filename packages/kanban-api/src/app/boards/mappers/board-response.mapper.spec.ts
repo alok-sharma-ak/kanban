@@ -12,7 +12,7 @@ describe('board response mapper', () => {
 
   it('maps a board without relations or credentials', () => {
     expect(toBoardResponse(board)).toEqual({
-      id: 'board-id', name: 'Board', description: null, userId: 'user-id', createdAt: now, updatedAt: now,
+      id: 'board-id', name: 'Board', description: null, userId: 'user-id', role: 'OWNER', createdAt: now, updatedAt: now,
     });
   });
 

@@ -1,0 +1,21 @@
+meta {
+  name: Delete second task
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{HostUrl}}/tasks/{{SecondTaskId}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{AuthKey}}
+}
+
+tests {
+  test("deletes the remaining task", function () {
+    expect(res.getStatus()).to.equal(204);
+  });
+}

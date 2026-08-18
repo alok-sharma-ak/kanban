@@ -1,12 +1,14 @@
 import { Column as DbColumn, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Attachment } from '../attachments/entities/attachment.entity';
 import { Board } from '../boards/entities/board.entity';
+import { BoardMember } from '../boards/entities/board-member.entity';
 import { KanbanColumn } from '../columns/entities/column.entity';
 import { Task } from '../tasks/entities/task.entity';
 import { User } from '../users/entities/user.entity';
 
 export { User } from '../users/entities/user.entity';
 export { Board } from '../boards/entities/board.entity';
+export { BoardMember } from '../boards/entities/board-member.entity';
 export { KanbanColumn } from '../columns/entities/column.entity';
 export { Task } from '../tasks/entities/task.entity';
 export { Attachment } from '../attachments/entities/attachment.entity';
@@ -25,4 +27,4 @@ export class StorageCleanupJob {
   @UpdateDateColumn({ name: 'updated_at' }) updatedAt!: Date;
 }
 
-export const ENTITIES = [User, Board, KanbanColumn, Task, Attachment, StorageCleanupJob];
+export const ENTITIES = [User, Board, BoardMember, KanbanColumn, Task, Attachment, StorageCleanupJob];

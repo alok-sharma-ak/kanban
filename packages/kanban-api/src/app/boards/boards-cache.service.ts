@@ -10,7 +10,7 @@ export class BoardsCacheService {
   }
 
   async detailKey(userId: string, boardId: string): Promise<string> {
-    return `board:${userId}:${boardId}:v${await this.redis.cacheVersion(userId)}`;
+    return `board:${userId}:${boardId}:v${await this.redis.boardCacheVersion(boardId)}`;
   }
 
   get<T>(key: string): Promise<T | null> {
@@ -21,8 +21,11 @@ export class BoardsCacheService {
     return this.redis.setJson(key, value);
   }
 
-  async invalidate(userId: string, boardId: string): Promise<void> {
-    await this.redis.bumpCacheVersion(userId);
-    await this.redis.del(`boards:${userId}`, `board:${userId}:${boardId}`);
+  async invalidateBoard(boardId: string): Promise<void> {
+    await this.redis.bumpBoardCacheVersion(boardId);
+  }
+
+  async invalidateLists(userIds: string[]): Promise<void> {
+    await Promise.all([...new Set(userIds)].map((userId) => this.redis.bumpCacheVersion(userId)));
   }
 }

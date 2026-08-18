@@ -4,10 +4,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Joi from 'joi';
 import { AttachmentsModule } from './attachments/attachments.module';
+import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
 import { BoardsModule } from './boards/boards.module';
 import { ColumnsModule } from './columns/columns.module';
 import { JwtAuthGuard } from './common/auth';
+import { SystemRolesGuard } from './common/system-roles';
 import { RequestContextMiddleware } from './common/request-context.middleware';
 import { RequestLoggingInterceptor } from './common/request-logging.interceptor';
 import { AppConfigModule } from './config/config.module';
@@ -25,8 +27,12 @@ import { UsersModule } from './users/users.module';
       AUTH_RATE_LIMIT: Joi.number().default(10), AUTH_RATE_WINDOW_SECONDS: Joi.number().default(60), MINIO_ENDPOINT: Joi.string().required(), MINIO_ACCESS_KEY: Joi.string().required(), MINIO_SECRET_KEY: Joi.string().required(), MINIO_BUCKET: Joi.string().default('kanban-attachments'), UPLOAD_MAX_BYTES: Joi.number().default(10485760),
     }) }),
     TypeOrmModule.forRootAsync({ inject: [ConfigService], useFactory: (config: ConfigService) => ({ type: 'postgres', url: config.getOrThrow('DATABASE_URL'), entities: ENTITIES, synchronize: false }) }),
-    AppConfigModule, InfrastructureModule, AuthModule, UsersModule, BoardsModule, ColumnsModule, TasksModule, AttachmentsModule, HealthModule,
+    AppConfigModule, InfrastructureModule, AuthModule, UsersModule, AdminModule, BoardsModule, ColumnsModule, TasksModule, AttachmentsModule, HealthModule,
   ],
-  providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }, { provide: APP_INTERCEPTOR, useClass: RequestLoggingInterceptor }],
+  providers: [
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: SystemRolesGuard },
+    { provide: APP_INTERCEPTOR, useClass: RequestLoggingInterceptor },
+  ],
 })
 export class AppModule implements NestModule { configure(consumer: MiddlewareConsumer) { consumer.apply(RequestContextMiddleware).forRoutes({ path: '{*path}', method: RequestMethod.ALL }); } }

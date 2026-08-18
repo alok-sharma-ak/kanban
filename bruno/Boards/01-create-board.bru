@@ -1,0 +1,40 @@
+meta {
+  name: Create board
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{HostUrl}}/boards
+  body: json
+  auth: none
+}
+
+headers {
+  content-type: application/json
+  Authorization: Bearer {{AuthKey}}
+}
+
+body:json {
+  {
+    "name": "Bruno Test Board",
+    "description": "Temporary CLI collection board"
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  bru.setVar("BoardId", body.id);
+  bru.setVar("TodoColumnId", body.columns[0].id);
+  bru.setVar("ProgressColumnId", body.columns[1].id);
+  bru.setVar("DoneColumnId", body.columns[2].id);
+}
+
+tests {
+  test("creates a board with default columns", function () {
+    const body = res.getBody();
+    expect(res.getStatus()).to.equal(201);
+    expect(body.role).to.equal("OWNER");
+    expect(body.columns.map((column) => column.name)).to.deep.equal(["Todo", "In Progress", "Done"]);
+  });
+}

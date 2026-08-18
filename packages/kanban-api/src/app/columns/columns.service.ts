@@ -10,26 +10,27 @@ import { ReorderColumnsDto } from './dto/reorder-columns.dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
 import { KanbanColumn } from './entities/column.entity';
 import { toColumnResponse } from './mappers/column-response.mapper';
+import { BoardAccessService } from '../boards/board-access.service';
+import { BOARD_EDIT_ROLES } from '../common/roles';
 
 @Injectable()
 export class ColumnsService {
   constructor(
     @InjectRepository(KanbanColumn) private readonly columns: Repository<KanbanColumn>,
     private readonly boards: BoardsService,
+    private readonly access: BoardAccessService,
     private readonly dataSource: DataSource,
   ) {}
 
   async owned(columnId: string, userId: string): Promise<KanbanColumn> {
-    const column = await this.columns.createQueryBuilder('column')
-      .innerJoinAndSelect('column.board', 'board')
-      .where('column.id = :columnId AND board.user_id = :userId', { columnId, userId })
-      .getOne();
+    const column = await this.columns.findOne({ where: { id: columnId }, relations: { board: true } });
     if (!column) throw new NotFoundException('Column not found');
+    await this.access.get(column.boardId, userId);
     return column;
   }
 
   async create(boardId: string, userId: string, dto: CreateColumnDto): Promise<ColumnResponseDto> {
-    await this.boards.owned(boardId, userId);
+    await this.access.require(boardId, userId, BOARD_EDIT_ROLES);
     const column = await this.dataSource.transaction(async (manager) => {
       await manager.getRepository(Board).createQueryBuilder('board').setLock('pessimistic_write')
         .where('board.id = :boardId', { boardId }).getOneOrFail();
@@ -42,6 +43,7 @@ export class ColumnsService {
 
   async update(columnId: string, userId: string, dto: UpdateColumnDto): Promise<ColumnResponseDto> {
     const column = await this.owned(columnId, userId);
+    await this.access.require(column.boardId, userId, BOARD_EDIT_ROLES);
     column.name = dto.name.trim();
     const saved = await this.columns.save(column);
     await this.boards.invalidate(userId, column.boardId);
@@ -50,6 +52,7 @@ export class ColumnsService {
 
   async remove(columnId: string, userId: string): Promise<void> {
     const column = await this.owned(columnId, userId);
+    await this.access.require(column.boardId, userId, BOARD_EDIT_ROLES);
     await this.dataSource.transaction(async (manager) => {
       await manager.getRepository(Board).createQueryBuilder('board').setLock('pessimistic_write')
         .where('board.id = :boardId', { boardId: column.boardId }).getOneOrFail();
@@ -62,7 +65,7 @@ export class ColumnsService {
   }
 
   async reorder(userId: string, dto: ReorderColumnsDto): Promise<ColumnResponseDto[]> {
-    await this.boards.owned(dto.boardId, userId);
+    await this.access.require(dto.boardId, userId, BOARD_EDIT_ROLES);
     if (new Set(dto.columnIds).size !== dto.columnIds.length) throw new BadRequestException('columnIds must be unique');
     await this.dataSource.transaction(async (manager) => {
       await manager.getRepository(Board).createQueryBuilder('board').setLock('pessimistic_write')

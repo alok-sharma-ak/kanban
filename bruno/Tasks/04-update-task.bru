@@ -1,0 +1,30 @@
+meta {
+  name: Update task
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{HostUrl}}/tasks/{{FirstTaskId}}
+  body: json
+  auth: none
+}
+
+headers {
+  content-type: application/json
+  Authorization: Bearer {{AuthKey}}
+}
+
+body:json {
+  {
+    "title": "Updated Bruno task",
+    "description": "Updated through Bruno"
+  }
+}
+
+tests {
+  test("updates the task", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().title).to.equal("Updated Bruno task");
+  });
+}

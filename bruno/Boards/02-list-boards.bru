@@ -1,0 +1,22 @@
+meta {
+  name: List boards
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{HostUrl}}/boards
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{AuthKey}}
+}
+
+tests {
+  test("lists the created board", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().some((board) => board.id === bru.getVar("BoardId"))).to.equal(true);
+  });
+}

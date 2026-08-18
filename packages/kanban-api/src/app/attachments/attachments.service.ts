@@ -14,6 +14,8 @@ import { AttachmentResponseDto } from './dto/attachment-response.dto';
 import { Attachment } from './entities/attachment.entity';
 import { toAttachmentResponse } from './mappers/attachment-response.mapper';
 import { UploadedAttachment } from './types/uploaded-attachment';
+import { BoardAccessService } from '../boards/board-access.service';
+import { TASK_EDIT_ROLES } from '../common/roles';
 
 export interface AttachmentDownload {
   attachment: Attachment;
@@ -32,6 +34,7 @@ export class AttachmentsService {
     private readonly outbox: OutboxService,
     private readonly dataSource: DataSource,
     private readonly config: AppConfigService,
+    private readonly access: BoardAccessService,
   ) {}
 
   async owned(attachmentId: string, userId: string): Promise<Attachment> {
@@ -39,9 +42,10 @@ export class AttachmentsService {
       .innerJoinAndSelect('attachment.task', 'task')
       .innerJoinAndSelect('task.column', 'column')
       .innerJoinAndSelect('column.board', 'board')
-      .where('attachment.id = :attachmentId AND board.user_id = :userId', { attachmentId, userId })
+      .where('attachment.id = :attachmentId', { attachmentId })
       .getOne();
     if (!attachment) throw new NotFoundException('Attachment not found');
+    await this.access.get(attachment.task.column.boardId, userId);
     return attachment;
   }
 
@@ -51,6 +55,7 @@ export class AttachmentsService {
     if (!ATTACHMENT_MIME_TYPES.has(file.mimetype)) throw new UnsupportedMediaTypeException('Unsupported attachment type');
 
     const task = await this.tasks.ownedTask(taskId, userId);
+    await this.access.require(task.column.boardId, userId, TASK_EDIT_ROLES);
     const storageKey = `${taskId}/${randomUUID()}`;
     try {
       await this.storage.put(storageKey, file.buffer, file.mimetype);
@@ -104,6 +109,7 @@ export class AttachmentsService {
 
   async remove(attachmentId: string, userId: string): Promise<void> {
     const attachment = await this.owned(attachmentId, userId);
+    await this.access.require(attachment.task.column.boardId, userId, TASK_EDIT_ROLES);
     await this.dataSource.transaction(async (manager) => {
       await this.outbox.enqueue(manager, [attachment.storageKey]);
       await manager.delete(Attachment, attachmentId);

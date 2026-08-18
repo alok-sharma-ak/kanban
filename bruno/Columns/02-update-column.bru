@@ -1,0 +1,29 @@
+meta {
+  name: Update column
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{HostUrl}}/columns/{{CustomColumnId}}
+  body: json
+  auth: none
+}
+
+headers {
+  content-type: application/json
+  Authorization: Bearer {{AuthKey}}
+}
+
+body:json {
+  {
+    "name": "QA Review"
+  }
+}
+
+tests {
+  test("renames the column", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().name).to.equal("QA Review");
+  });
+}

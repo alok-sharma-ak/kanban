@@ -20,6 +20,8 @@ export class RedisService implements OnModuleDestroy {
   async del(...keys: string[]): Promise<void> { try { if (keys.length) await this.client.del(...keys); } catch (error) { this.logger.warn(`Cache invalidation failed: ${String(error)}`); } }
   async cacheVersion(userId: string) { try { return Number(await this.client.get(`cache-version:${userId}`) ?? 0); } catch { return 0; } }
   async bumpCacheVersion(userId: string) { try { await this.client.incr(`cache-version:${userId}`); } catch (error) { this.logger.warn(`Cache version bump failed: ${String(error)}`); } }
+  async boardCacheVersion(boardId: string) { try { return Number(await this.client.get(`board-cache-version:${boardId}`) ?? 0); } catch { return 0; } }
+  async bumpBoardCacheVersion(boardId: string) { try { await this.client.incr(`board-cache-version:${boardId}`); } catch (error) { this.logger.warn(`Board cache version bump failed: ${String(error)}`); } }
   async rateLimit(key: string): Promise<{ allowed: boolean; retryAfter: number }> {
     try {
       const window = this.config.authRateWindowSeconds;

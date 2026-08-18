@@ -1,6 +1,7 @@
 import { BadRequestException, PayloadTooLargeException, UnsupportedMediaTypeException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { BoardsService } from '../boards/boards.service';
+import { BoardAccessService } from '../boards/board-access.service';
 import { AppConfigService } from '../config/app-config.service';
 import { OutboxService } from '../infrastructure/outbox.service';
 import { StorageService } from '../infrastructure/storage.service';
@@ -31,6 +32,7 @@ describe('AttachmentsService', () => {
       storage as unknown as StorageService, boards as unknown as BoardsService,
       outbox as unknown as OutboxService, dataSource as unknown as DataSource,
       { uploadMaxBytes: 10 } as AppConfigService,
+      { get: jest.fn(), require: jest.fn().mockResolvedValue({}) } as unknown as BoardAccessService,
     );
   });
 

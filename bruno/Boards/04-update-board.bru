@@ -1,0 +1,29 @@
+meta {
+  name: Update board
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{HostUrl}}/boards/{{BoardId}}
+  body: json
+  auth: none
+}
+
+headers {
+  content-type: application/json
+  Authorization: Bearer {{AuthKey}}
+}
+
+body:json {
+  {
+    "name": "Bruno Updated Board"
+  }
+}
+
+tests {
+  test("updates the board", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().name).to.equal("Bruno Updated Board");
+  });
+}

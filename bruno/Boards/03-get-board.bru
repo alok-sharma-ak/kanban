@@ -1,0 +1,24 @@
+meta {
+  name: Get board detail
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{HostUrl}}/boards/{{BoardId}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{AuthKey}}
+}
+
+tests {
+  test("returns nested board detail", function () {
+    const body = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(body.id).to.equal(bru.getVar("BoardId"));
+    expect(body.columns).to.have.length(3);
+  });
+}

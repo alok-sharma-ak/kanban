@@ -1,6 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { BoardsService } from '../boards/boards.service';
+import { BoardAccessService } from '../boards/board-access.service';
 import { ColumnsService } from '../columns/columns.service';
 import { OutboxService } from '../infrastructure/outbox.service';
 import { Task } from './entities/task.entity';
@@ -19,6 +20,7 @@ describe('TasksService', () => {
     service = new TasksService(
       repository as unknown as Repository<Task>, columns as unknown as ColumnsService,
       dataSource as unknown as DataSource, {} as BoardsService, {} as OutboxService,
+      { get: jest.fn(), require: jest.fn().mockResolvedValue({}) } as unknown as BoardAccessService,
     );
   });
 

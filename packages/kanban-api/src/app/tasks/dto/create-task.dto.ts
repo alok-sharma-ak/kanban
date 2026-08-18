@@ -1,6 +1,6 @@
 import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, Length, Matches, MaxLength } from 'class-validator';
+import { IsOptional, IsString, IsUUID, Length, Matches, MaxLength, ValidateIf } from 'class-validator';
 
 export class CreateTaskDto {
   @ApiProperty({ minLength: 1, maxLength: 200 })
@@ -9,4 +9,7 @@ export class CreateTaskDto {
   @ApiPropertyOptional({ maxLength: 10000 })
   @Transform(({ value }: { value: unknown }) => typeof value === 'string' ? value.trim() : value)
   @IsOptional() @IsString() @MaxLength(10000) description?: string;
+  @ApiPropertyOptional({ format: 'uuid', nullable: true })
+  @ValidateIf((_, value) => value !== undefined && value !== null) @IsUUID()
+  assigneeId?: string | null;
 }

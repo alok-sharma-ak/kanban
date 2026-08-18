@@ -31,6 +31,14 @@ The API is available at `http://localhost:3001/api`; Swagger is available at `ht
 
 Build and verify with `pnpm api:build`, `pnpm api:typecheck`, `pnpm api:lint`, `pnpm api:test`, and `pnpm api:e2e`. Inspect migrations with `pnpm db:status`, run one cleanup-outbox batch with `pnpm storage:cleanup`, and stop infrastructure with `pnpm infra:down`. PostgreSQL, Redis, and MinIO data remain in named Docker volumes.
 
+The repository-root `bruno/` collection provides a repeatable local API workflow for Auth, Users, Boards, Columns, and Tasks. With the infrastructure and API running, execute it with `pnpm bruno:test`; see `bruno/README.md` for environment and secret configuration.
+
+Promote an existing registered account to global system administrator with:
+
+```sh
+pnpm admin:promote -- --email admin@example.com
+```
+
 ## API behavior
 
 - All endpoints except registration, login, health, and development Swagger require `Authorization: Bearer <token>`.
@@ -40,6 +48,9 @@ Build and verify with `pnpm api:build`, `pnpm api:typecheck`, `pnpm api:lint`, `
 - Attachments accept PDF, JPEG, PNG, GIF, WebP, and plain-text files up to 10 MB and are streamed only after ownership authorization.
 - `/api/health/live` reports process liveness; `/api/health/ready` and the backward-compatible `/api/health` verify PostgreSQL, Redis, MinIO, and the cleanup worker.
 - Object deletion is recorded transactionally and retried by the storage-cleanup outbox worker.
+- Global `ADMIN` controls `/api/admin/users` account-management routes but receives no implicit board access.
+- Boards use an implicit `OWNER` and stored `ADMIN`, `MEMBER`, or `VIEWER` memberships. Accessible board list/detail responses include the caller's effective `role`; task responses include nullable `assigneeId`.
+- Owners manage all memberships and ownership transfers. Board admins manage settings, columns, tasks, attachments, and non-admin memberships; members manage tasks and attachments; viewers have read-only access.
 
 ## Generated workspace notes
 

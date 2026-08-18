@@ -1,0 +1,38 @@
+meta {
+  name: Reorder columns
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{HostUrl}}/columns/reorder
+  body: json
+  auth: none
+}
+
+headers {
+  content-type: application/json
+  Authorization: Bearer {{AuthKey}}
+}
+
+body:json {
+  {
+    "boardId": "{{BoardId}}",
+    "columnIds": [
+      "{{TodoColumnId}}",
+      "{{ProgressColumnId}}",
+      "{{CustomColumnId}}",
+      "{{DoneColumnId}}"
+    ]
+  }
+}
+
+tests {
+  test("reorders every board column", function () {
+    const body = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(body).to.have.length(4);
+    expect(body.map((column) => column.position)).to.deep.equal([1, 2, 3, 4]);
+    expect(body[2].id).to.equal(bru.getVar("CustomColumnId"));
+  });
+}

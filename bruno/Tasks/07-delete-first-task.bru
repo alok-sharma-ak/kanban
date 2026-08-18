@@ -1,0 +1,21 @@
+meta {
+  name: Delete first task
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{HostUrl}}/tasks/{{FirstTaskId}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{AuthKey}}
+}
+
+tests {
+  test("deletes the moved task", function () {
+    expect(res.getStatus()).to.equal(204);
+  });
+}

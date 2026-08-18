@@ -1,0 +1,32 @@
+meta {
+  name: Move task
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{HostUrl}}/tasks/{{FirstTaskId}}/move
+  body: json
+  auth: none
+}
+
+headers {
+  content-type: application/json
+  Authorization: Bearer {{AuthKey}}
+}
+
+body:json {
+  {
+    "columnId": "{{ProgressColumnId}}",
+    "position": 1
+  }
+}
+
+tests {
+  test("moves the task to another column", function () {
+    const body = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(body.columnId).to.equal(bru.getVar("ProgressColumnId"));
+    expect(body.position).to.equal(1);
+  });
+}

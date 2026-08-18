@@ -6,3 +6,4 @@ allowBuilds:
   less: true
   unrs-resolver: true
   sharp: true
+  protobufjs: false

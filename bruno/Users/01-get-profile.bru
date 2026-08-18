@@ -1,0 +1,24 @@
+meta {
+  name: Get profile
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{HostUrl}}/users/me
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{AuthKey}}
+}
+
+tests {
+  test("returns a sanitized profile", function () {
+    const body = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+    expect(body.email).to.equal(bru.getVar("TestEmail"));
+    expect(body).not.to.have.property("passwordHash");
+  });
+}

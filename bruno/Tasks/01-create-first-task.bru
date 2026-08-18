@@ -1,0 +1,36 @@
+meta {
+  name: Create first task
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{HostUrl}}/columns/{{TodoColumnId}}/tasks
+  body: json
+  auth: none
+}
+
+headers {
+  content-type: application/json
+  Authorization: Bearer {{AuthKey}}
+}
+
+body:json {
+  {
+    "title": "First Bruno task",
+    "description": "Temporary task"
+  }
+}
+
+script:post-response {
+  bru.setVar("FirstTaskId", res.getBody().id);
+}
+
+tests {
+  test("creates the first task", function () {
+    const body = res.getBody();
+    expect(res.getStatus()).to.equal(201);
+    expect(body.position).to.equal(1);
+    expect(body.columnId).to.equal(bru.getVar("TodoColumnId"));
+  });
+}

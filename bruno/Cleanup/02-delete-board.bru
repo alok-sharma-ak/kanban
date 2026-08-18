@@ -1,0 +1,21 @@
+meta {
+  name: Delete temporary board
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{HostUrl}}/boards/{{BoardId}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{AuthKey}}
+}
+
+tests {
+  test("deletes the temporary board", function () {
+    expect(res.getStatus()).to.equal(204);
+  });
+}

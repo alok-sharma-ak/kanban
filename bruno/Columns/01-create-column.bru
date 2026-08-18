@@ -1,0 +1,35 @@
+meta {
+  name: Create column
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{HostUrl}}/boards/{{BoardId}}/columns
+  body: json
+  auth: none
+}
+
+headers {
+  content-type: application/json
+  Authorization: Bearer {{AuthKey}}
+}
+
+body:json {
+  {
+    "name": "Review"
+  }
+}
+
+script:post-response {
+  bru.setVar("CustomColumnId", res.getBody().id);
+}
+
+tests {
+  test("appends a column", function () {
+    const body = res.getBody();
+    expect(res.getStatus()).to.equal(201);
+    expect(body.name).to.equal("Review");
+    expect(body.position).to.equal(4);
+  });
+}

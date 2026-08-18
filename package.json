@@ -14,7 +14,9 @@
     "db:migrate": "TS_NODE_PROJECT=packages/kanban-api/tsconfig.app.json node -r ts-node/register node_modules/typeorm/cli.js migration:run -d packages/kanban-api/src/app/database/data-source.ts",
     "db:revert": "TS_NODE_PROJECT=packages/kanban-api/tsconfig.app.json node -r ts-node/register node_modules/typeorm/cli.js migration:revert -d packages/kanban-api/src/app/database/data-source.ts",
     "db:status": "TS_NODE_PROJECT=packages/kanban-api/tsconfig.app.json node -r ts-node/register node_modules/typeorm/cli.js migration:show -d packages/kanban-api/src/app/database/data-source.ts",
-    "storage:cleanup": "TS_NODE_PROJECT=packages/kanban-api/tsconfig.app.json node -r ts-node/register packages/kanban-api/src/outbox-cleanup.ts"
+    "storage:cleanup": "TS_NODE_PROJECT=packages/kanban-api/tsconfig.app.json node -r ts-node/register packages/kanban-api/src/outbox-cleanup.ts",
+    "admin:promote": "TS_NODE_PROJECT=packages/kanban-api/tsconfig.app.json node -r ts-node/register packages/kanban-api/src/promote-admin.ts",
+    "bruno:test": "cd bruno && bru run -r --env local --bail"
   },
   "private": true,
   "devDependencies": {
@@ -43,6 +45,7 @@
     "@types/react-dom": "^19.0.0",
     "@typescript-eslint/eslint-plugin": "^8.67.0",
     "@typescript-eslint/parser": "^8.67.0",
+    "@usebruno/cli": "^4.0.0",
     "eslint": "^10.8.1",
     "jest": "^29.7.0",
     "nx": "22.7.8",

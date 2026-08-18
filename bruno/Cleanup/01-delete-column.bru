@@ -1,0 +1,21 @@
+meta {
+  name: Delete temporary column
+  type: http
+  seq: 1
+}
+
+delete {
+  url: {{HostUrl}}/columns/{{CustomColumnId}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{AuthKey}}
+}
+
+tests {
+  test("deletes the empty custom column", function () {
+    expect(res.getStatus()).to.equal(204);
+  });
+}
