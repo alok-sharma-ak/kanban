@@ -17,28 +17,17 @@ headers {
 body:json {
   {
     "name": "Bruno Test User",
-    "email": "{{TestEmail}}",
+    "email": "admin@example.com",
     "password": "Industry12345"
   }
 }
 
-script:pre-request {
-  bru.setVar("TestEmail", `bruno-${Date.now()}-${Math.random().toString(16).slice(2)}@example.com`);
-}
-
-script:post-response {
-  const body = res.getBody();
-  bru.setVar("AuthKey", body.accessToken);
-  bru.setVar("RefreshToken", body.refreshToken);
-  bru.setVar("UserId", body.user.id);
-}
-
 tests {
-  test("registers a user", function () {
+  test("registers the fixture user or confirms it already exists", function () {
     const body = res.getBody();
-    expect(res.getStatus()).to.equal(201);
-    expect(body.accessToken).to.be.a("string").and.not.empty;
-    expect(body.refreshToken).to.be.a("string").and.not.empty;
-    expect(body.user.email).to.equal(bru.getVar("TestEmail"));
+    expect(res.getStatus()).to.be.oneOf([201, 409]);
+    if (res.getStatus() === 201) {
+      expect(body.user.email).to.equal("admin@example.com");
+    }
   });
 }

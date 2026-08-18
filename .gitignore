@@ -29,7 +29,6 @@ node_modules
 .env
 .env.*
 !.env.example
-!/bruno/.env.example
 !/packages/kanban-api/.env.example
 !/packages/kanban-dashboard/.env.example
 /.sass-cache

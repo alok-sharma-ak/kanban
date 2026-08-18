@@ -16,14 +16,14 @@ headers {
 
 body:json {
   {
-    "email": "{{TestEmail}}",
+    "email": "admin@gmail.com",
     "password": "Industry12345"
   }
 }
 
 script:post-response {
   const body = res.getBody();
-  bru.setVar("AuthKey", body.accessToken);
+  bru.deleteVar("AuthKey");
   bru.setVar("RefreshToken", body.refreshToken);
 }
 
